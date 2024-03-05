@@ -1,0 +1,40 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: amanuserapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: amanuserapp
+  template:
+    metadata:
+      labels:
+        app: amanuserapp
+    spec:
+      containers:
+        - name: amanuserapp
+          image: 381492132174.dkr.ecr.ap-southeast-2.amazonaws.com/userapp-repo:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9090
+              name: http
+              protocol: TCP
+
+# service type loadbalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: amanuserapp
+    k8s-app: amanuserapp
+  name: amanuserapp
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 9090
+  selector:
+    app: amanuserapp
